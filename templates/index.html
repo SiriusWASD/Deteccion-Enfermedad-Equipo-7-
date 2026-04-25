@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Experto - Detección de Diabetes</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        h1 { color: #1a73e8; text-align: center; font-size: 24px; }
+        p { color: #5f6368; text-align: center; margin-bottom: 25px; }
+        .sintoma-item { background: #f8f9fa; margin-bottom: 10px; padding: 12px; border-radius: 8px; display: flex; align-items: center; transition: 0.3s; }
+        .sintoma-item:hover { background: #e8f0fe; }
+        input[type="checkbox"] { margin-right: 15px; transform: scale(1.2); cursor: pointer; }
+        button { width: 100%; padding: 15px; background-color: #1a73e8; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s; margin-top: 20px; }
+        button:hover { background-color: #1557b0; }
+        #resultado { margin-top: 25px; padding: 20px; border-radius: 8px; display: none; animation: fadeIn 0.5s; }
+        .alerta { background-color: #fce8e6; border-left: 5px solid #d93025; color: #a50e0e; }
+        .ok { background-color: #e6f4ea; border-left: 5px solid #1e8e3e; color: #137333; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Chequeo de Salud</h1>
+    <p>Seleccione los síntomas que ha presentado recientemente:</p>
+    
+    <div id="lista-sintomas">
+        <div class="sintoma-item"><input type="checkbox" value="Sed excesiva"> Sed excesiva</div>
+        <div class="sintoma-item"><input type="checkbox" value="Mucha hambre"> Mucha hambre</div>
+        <div class="sintoma-item"><input type="checkbox" value="Orina frecuente"> Orina frecuente</div>
+        <div class="sintoma-item"><input type="checkbox" value="Visión borrosa"> Visión borrosa</div>
+        <div class="sintoma-item"><input type="checkbox" value="Cansancio persistente"> Cansancio persistente</div>
+    </div>
+
+    <button onclick="realizarDiagnostico()">Analizar Síntomas</button>
+
+    <button onclick="window.location.href='/historial'" style="background-color: #6c757d; margin-top: 10px;">
+    Ver Historial de Registros
+    </button>
+
+    <div id="resultado">
+        <h3 id="res-titulo"></h3>
+        <p id="res-desc" style="text-align: left; margin: 0;"></p>
+    </div>
+</div>
+
+<script>
+    async function realizarDiagnostico() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+        const sintomasSeleccionados = Array.from(checkboxes).map(cb => cb.value);
+
+        if (sintomasSeleccionados.length === 0) {
+            alert("Por favor, seleccione al menos un síntoma.");
+            return;
+        }
+
+        try {
+            const respuesta = await fetch('/diagnosticar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sintomas: sintomasSeleccionados })
+            });
+
+            const data = await respuesta.json();
+            
+            const divRes = document.getElementById('resultado');
+            const titulo = document.getElementById('res-titulo');
+            const desc = document.getElementById('res-desc');
+
+            divRes.style.display = 'block';
+            titulo.innerText = data.diagnostico;
+            desc.innerText = data.recomendacion;
+
+            // Cambiar color según el diagnóstico
+            if (data.diagnostico.includes("Alta")) {
+                divRes.className = 'alerta';
+            } else {
+                divRes.className = 'ok';
+            }
+
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Hubo un error al conectar con el servidor.");
+        }
+    }
+</script>
+
+</body>
+</html>

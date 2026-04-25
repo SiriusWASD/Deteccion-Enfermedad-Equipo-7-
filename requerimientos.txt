@@ -1,0 +1,5 @@
+1. Instalar el PostgreSQL
+2. Mover el archivo database.sql al PostgreSQL y ejecutar el código
+3. Instalar el Flask en la terminal: python -m pip install flask psycopg2-binary
+4. Entrar a la carpeta backend en la terminal: cd backend
+5. Iniciar el servicio: py app.py
