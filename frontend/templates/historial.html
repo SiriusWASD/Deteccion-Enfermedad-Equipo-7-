@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial - Sistema Experto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/historial.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <a href="/" class="btn-back">← Volver al Analizador</a>
+
+    <header>
+        <h1>Historial Médico</h1>
+        <p class="subtitle">Resultados previos del equipo de desarrollo.</p>
+    </header>
+
+    {% if registros %}
+        {% for r in registros %}
+        <div class="registro-card">
+            <span class="fecha">{{ r[0].strftime('%d %b %Y • %H:%M') }}</span>
+            
+            <div class="diagnostico-tag {% if 'Alta' in r[1] %}tag-alta{% elif 'moderado' in r[1] %}tag-moderada{% else %}tag-baja{% endif %}">
+            {{ r[1] }}
+            </div>
+
+            <p class="info-label">SÍNTOMAS:</p>
+            <p class="info-content">{{ r[2] }}</p>
+
+            <p class="info-label">RECOMENDACIÓN:</p>
+            <p class="info-content"><em>{{ r[3] }}</em></p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p style="text-align:center; color:#94a3b8;">No hay registros aún.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chequeo Médico Virtual</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+
+<div class="app-card">
+    <h1>Diagnóstico de Diabetes Mellitus</h1>
+    <p class="meta-text">Tu privacidad es importante. Los datos solo se usan para este análisis preventivo.</p>
+
+    <div id="error-box"></div>
+
+    <div id="formulario">
+        <div class="sintoma-card" onclick="this.querySelector('input').click()">
+            <input type="checkbox" value="Sed excesiva">
+            <label>Siento mucha sed (Polidipsia)</label>
+        </div>
+        <div class="sintoma-card" onclick="this.querySelector('input').click()">
+            <input type="checkbox" value="Mucha hambre">
+            <label>Hambre constante (Polifagia)</label>
+        </div>
+        <div class="sintoma-card" onclick="this.querySelector('input').click()">
+            <input type="checkbox" value="Orina frecuente">
+            <label>Necesidad de orinar seguido</label>
+        </div>
+        <div class="sintoma-card" onclick="this.querySelector('input').click()">
+            <input type="checkbox" value="Visión borrosa">
+            <label>Visión borrosa o cansada</label>
+        </div>
+        <div class="sintoma-card" onclick="this.querySelector('input').click()">
+            <input type="checkbox" value="Cansancio persistente">
+            <label>Cansancio o fatiga extrema</label>
+        </div>
+
+        <button class="btn-main" onclick="enviarAnalisis()">Obtener mi diagnóstico ahora</button>
+        <button class="btn-history" onclick="window.location.href='/historial'">Ver registros anteriores</button>
+    </div>
+
+    <div id="resultado"></div>
+</div>
+
+<script>
+    async function enviarAnalisis() {
+    const errorBox = document.getElementById('error-box');
+    const resDiv = document.getElementById('resultado');
+    
+    // Limpiamos mensajes previos
+    errorBox.style.display = 'none';
+    resDiv.style.display = 'none';
+
+    // Obtenemos los síntomas marcados
+    const seleccionados = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+                               .map(i => i.value);
+
+    // Validación: Si no hay nada marcado (Protocolo Error Humano)
+    if (seleccionados.length === 0) {
+        errorBox.innerText = "Por favor, selecciona al menos un síntoma para que el sistema pueda realizar el análisis.";
+        errorBox.style.display = 'block';
+        return;
+    }
+
+    try {
+        const res = await fetch('/diagnosticar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sintomas: seleccionados })
+        });
+
+        if (!res.ok) throw new Error();
+
+        const data = await res.json();
+        
+        // AQUÍ PEGAMOS EL CÓDIGO NUEVO
+        resDiv.innerHTML = `<h3>${data.resultado}</h3><p>${data.recomendacion}</p>`;
+        resDiv.className = 'alerta ' + data.clase;
+        resDiv.style.display = 'block';
+
+    } catch (e) {
+        errorBox.innerText = "No pudimos contactar al servidor. Revisa tu conexión o intenta más tarde.";
+        errorBox.style.display = 'block';
+    }
+}
+</script>
+
+</body>
+</html>

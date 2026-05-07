@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, jsonify
 import psycopg2
 
-app = Flask(__name__, template_folder='../templates')
+app = Flask(__name__, 
+            template_folder='../frontend/templates', 
+            static_folder='../frontend/static')
 
 # Configuración de conexión (Ajusta con tu contraseña de Postgres)
 DB_CONFIG = {
@@ -26,15 +28,25 @@ def diagnosticar():
     # Motor de Inferencia (Reglas If-Then)
     puntos = sum(1 for s in sintomas_usuario if s in SINTOMAS_DIABETES)
     
-    if puntos >= 3:
+    if puntos >= 4:
         resultado = "Alta probabilidad de Diabetes Mellitus."
         recomendacion = "Urgente: Agende una prueba de glucosa en ayunas."
-    elif puntos >= 1:
+        clase = "riesgo-alto"
+    elif puntos >= 2:
         resultado = "Riesgo moderado / Síntomas leves."
         recomendacion = "Monitoree su dieta y consulte a su médico preventivamente."
-    else:
-        resultado = "Sin indicios claros."
-        recomendacion = "Mantenga un estilo de vida saludable."
+        clase = "riesgo-medio"
+    elif puntos == 1:
+        resultado = "Riesgo muy bajo o nulo"
+        recomendacion = "Mantenga un estilo de vida saludable y haga ejercicio."
+        clase = "riesgo-bajo"
+
+       # Asegúrate de que las llaves (lo que está a la izquierda de los dos puntos) # sean estas:
+    return jsonify({
+    'resultado': resultado,      # <--- Esta es la etiqueta
+    'recomendacion': recomendacion,
+    'clase': clase
+    })
 
     # Guardar en PostgreSQL
     try:
