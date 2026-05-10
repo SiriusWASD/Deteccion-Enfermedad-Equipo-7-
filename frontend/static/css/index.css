@@ -24,10 +24,10 @@ body {
     padding: 20px;
 
     background-image: url('../images/fondo.png');
-    background-size: cover; /* Cubre toda la pantalla */
-    background-position: center; /* Centra la imagen */
-    background-repeat: no-repeat; /* No repite */
-    background-attachment: fixed; /* Mantiene el fondo quieto al hacer scroll */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 /* --- NUEVO LAYOUT DE 3 COLUMNAS --- */
@@ -187,14 +187,49 @@ h1 { font-size: 24px; color: #2563eb; text-align: center; margin-bottom: 8px; }
     }
     .panel-info {
         max-width: 480px; 
-        order: 2; /* Los paneles de info bajan en móviles */
+        order: 2;
     }
     .app-card {
-        order: 1; /* El formulario se queda arriba */
+        order: 1;
     }
 }
 
 @media (max-width: 380px) {
     .app-card { padding: 20px; }
     h1 { font-size: 20px; }
+}
+
+.lista-consejos ul {
+    text-align: left;
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.lista-consejos li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* La recomendación de riesgo se verá imponente y clara */
+.recomendacion-principal {
+    font-weight: 500;
+    margin: 15px 0;
+    line-height: 1.5;
+    font-size: 1.05em;
+    display: block;
+}
+
+/* Los tips de síntomas se ven como una lista de verificación */
+.lista-detalles {
+    text-align: left;
+    margin-top: 10px;
+    padding-left: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 10px;
+}
+
+.lista-detalles li {
+    list-style-type: disc;
+    margin-bottom: 8px;
+    font-size: 0.95em;
 }

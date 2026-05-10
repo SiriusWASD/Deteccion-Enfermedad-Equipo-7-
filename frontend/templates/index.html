@@ -21,6 +21,7 @@
             <li>Sobrepeso y obesidad.</li>
             <li>Falta de actividad física (sedentarismo).</li>
             <li>Resistencia a la insulina.</li>
+            <li>Consumo creciente de bebidas azucaradas y alimentos procesados.</li>
             <li>Factores hormonales o edad avanzada.</li>
         </ul>
     </aside>
@@ -62,6 +63,24 @@
                 <span class="icono-sintoma">😫</span>
             </div>
 
+            <div class="sintoma-card" onclick="this.querySelector('input').click()">
+                <input type="checkbox" value="Cicatrización lenta">
+                <label>Heridas que tardan en sanar</label>
+                <span class="icono-sintoma">🩹</span>
+            </div>
+
+            <div class="sintoma-card" onclick="this.querySelector('input').click()">
+                <input type="checkbox" value="Hormigueo">
+                <label>Hormigueo en manos o pies</label>
+                <span class="icono-sintoma">👐</span>
+            </div>
+
+            <div class="sintoma-card" onclick="this.querySelector('input').click()">
+                <input type="checkbox" value="Pérdida de peso">
+                <label>Pérdida de peso sin razón clara</label>
+                <span class="icono-sintoma">⚖️</span>
+            </div>
+
             <button class="btn-main" onclick="enviarAnalisis()">Obtener mi diagnóstico ahora</button>
             <button class="btn-history" onclick="window.location.href='/historial'">Ver registros anteriores</button>
         </div>
@@ -73,6 +92,7 @@
         <h3>⚠️ Advertencia y Aviso Importante</h3>
         <p class="texto-justificado">Esta aplicación es estrictamente una <strong>herramienta de apoyo preventivo</strong> y su resultado no es 100% preciso.</p>
         <p class="texto-justificado">Los algoritmos de este sistema experto evalúan coincidencias básicas de síntomas y <strong>no reemplazan un diagnóstico médico profesional</strong> ni pruebas de laboratorio.</p>
+        <p class="texto-justificado">De igual forma, esta herramienta va dirigido a personas de <strong>18 años en adelante</strong>.</p>
         <p><strong>Nota:</strong> Si presentas síntomas graves, consulta a un médico inmediatamente.</p>
     </aside>
 
@@ -109,8 +129,22 @@
 
         const data = await res.json();
         
-        // AQUÍ PEGAMOS EL CÓDIGO NUEVO
-        resDiv.innerHTML = `<h3>${data.resultado}</h3><p>${data.recomendacion}</p>`;
+        // 1. Título del resultado
+        let htmlContenido = `<h3>${data.resultado}</h3>`;
+
+        // 2. Recomendación de Riesgo (Sin puntos, texto fluido)
+        htmlContenido += `<p class="recomendacion-principal">${data.riesgo_msg}</p>`;
+
+        // 3. Consejos Específicos (Solo estos llevan puntos)
+        if (data.puntos_tips.length > 0) {
+            htmlContenido += `<ul class="lista-detalles">`;
+            data.puntos_tips.forEach(tip => {
+                htmlContenido += `<li>${tip}</li>`;
+            });
+            htmlContenido += `</ul>`;
+        }
+
+        resDiv.innerHTML = htmlContenido;
         resDiv.className = 'alerta ' + data.clase;
         resDiv.style.display = 'block';
 

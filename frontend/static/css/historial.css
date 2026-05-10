@@ -17,10 +17,10 @@ body {
     align-items: center;
 
     background-image: url('../images/fondo.png');
-    background-size: cover; /* Cubre toda la pantalla */
-    background-position: center; /* Centra la imagen */
-    background-repeat: no-repeat; /* No repite */
-    background-attachment: fixed; /* Mantiene el fondo quieto al hacer scroll */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 .container {
@@ -89,4 +89,24 @@ h1 { font-size: 22px; color: #0f172a; margin-bottom: 5px; }
     font-weight: bold;
     margin-bottom: 20px;
     box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
+}
+
+/* Estilo para el botón de borrar */
+.btn-delete {
+    width: 100%;
+    background: #4a4a4a;
+    color: #ffffff;
+    border: 1px solid #fecaca;
+    padding: 15px;
+    border-radius: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 20px;
+    font-family: 'Segoe UI', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.btn-delete:hover {
+    background: #ef4444;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
