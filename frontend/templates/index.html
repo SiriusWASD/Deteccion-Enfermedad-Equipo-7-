@@ -9,39 +9,73 @@
 </head>
 <body>
 
-<div class="app-card">
-    <h1>Diagnóstico de Diabetes Mellitus</h1>
-    <p class="meta-text">Tu privacidad es importante. Los datos solo se usan para este análisis preventivo.</p>
+<div class="layout-principal">
 
-    <div id="error-box"></div>
+    <aside class="panel-info descriptivo">
+        <h3>📋 Descripción de la Diabetes Mellitus</h3>
+        <p class="texto-justificado">La Diabetes Mellitus es una enfermedad metabólica crónica caracterizada por niveles elevados de glucosa en la sangre, debido a que el cuerpo no produce suficiente insulina o no la utiliza eficazmente.</p>
+        
+        <h4>Posibles Causas:</h4>
+        <ul>
+            <li>Genética y antecedentes familiares.</li>
+            <li>Sobrepeso y obesidad.</li>
+            <li>Falta de actividad física (sedentarismo).</li>
+            <li>Resistencia a la insulina.</li>
+            <li>Factores hormonales o edad avanzada.</li>
+        </ul>
+    </aside>
 
-    <div id="formulario">
-        <div class="sintoma-card" onclick="this.querySelector('input').click()">
-            <input type="checkbox" value="Sed excesiva">
-            <label>Siento mucha sed (Polidipsia)</label>
-        </div>
-        <div class="sintoma-card" onclick="this.querySelector('input').click()">
-            <input type="checkbox" value="Mucha hambre">
-            <label>Hambre constante (Polifagia)</label>
-        </div>
-        <div class="sintoma-card" onclick="this.querySelector('input').click()">
-            <input type="checkbox" value="Orina frecuente">
-            <label>Necesidad de orinar seguido</label>
-        </div>
-        <div class="sintoma-card" onclick="this.querySelector('input').click()">
-            <input type="checkbox" value="Visión borrosa">
-            <label>Visión borrosa o cansada</label>
-        </div>
-        <div class="sintoma-card" onclick="this.querySelector('input').click()">
-            <input type="checkbox" value="Cansancio persistente">
-            <label>Cansancio o fatiga extrema</label>
+    <main class="app-card">
+        <h1>Diagnóstico de Diabetes Mellitus</h1>
+        <p class="meta-text">Tu privacidad es importante. Los datos solo se usan para este análisis preventivo.</p>
+
+        <div id="error-box"></div>
+
+        <div id="formulario">
+            <div class="sintoma-card" onclick="this.querySelector('input').click()">
+                <input type="checkbox" value="Sed excesiva">
+                <label>Siento mucha sed (Polidipsia)</label>
+                <span class="icono-sintoma">💧</span>
+            </div>
+            
+            <div class="sintoma-card" onclick="this.querySelector('input').click()">
+                <input type="checkbox" value="Mucha hambre">
+                <label>Hambre constante (Polifagia)</label>
+                <span class="icono-sintoma">🍽️</span>
+            </div>
+            
+            <div class="sintoma-card" onclick="this.querySelector('input').click()">
+                <input type="checkbox" value="Orina frecuente">
+                <label>Necesidad de orinar seguido</label>
+                <span class="icono-sintoma">🚽</span>
+            </div>
+            
+            <div class="sintoma-card" onclick="this.querySelector('input').click()">
+                <input type="checkbox" value="Visión borrosa">
+                <label>Visión borrosa o cansada</label>
+                <span class="icono-sintoma">👓</span>
+            </div>
+            
+            <div class="sintoma-card" onclick="this.querySelector('input').click()">
+                <input type="checkbox" value="Cansancio persistente">
+                <label>Cansancio o fatiga extrema</label>
+                <span class="icono-sintoma">😫</span>
+            </div>
+
+            <button class="btn-main" onclick="enviarAnalisis()">Obtener mi diagnóstico ahora</button>
+            <button class="btn-history" onclick="window.location.href='/historial'">Ver registros anteriores</button>
         </div>
 
-        <button class="btn-main" onclick="enviarAnalisis()">Obtener mi diagnóstico ahora</button>
-        <button class="btn-history" onclick="window.location.href='/historial'">Ver registros anteriores</button>
-    </div>
+        <div id="resultado"></div>
+    </main>
 
-    <div id="resultado"></div>
+    <aside class="panel-info advertencia">
+        <h3>⚠️ Advertencia y Aviso Importante</h3>
+        <p class="texto-justificado">Esta aplicación es estrictamente una <strong>herramienta de apoyo preventivo</strong> y su resultado no es 100% preciso.</p>
+        <p class="texto-justificado">Los algoritmos de este sistema experto evalúan coincidencias básicas de síntomas y <strong>no reemplazan un diagnóstico médico profesional</strong> ni pruebas de laboratorio.</p>
+        <p><strong>Nota:</strong> Si presentas síntomas graves, consulta a un médico inmediatamente.</p>
+    </aside>
+
 </div>
 
 <script>
