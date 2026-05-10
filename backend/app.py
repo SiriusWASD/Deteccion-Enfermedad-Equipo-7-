@@ -36,19 +36,12 @@ def diagnosticar():
         resultado = "Riesgo moderado / Síntomas leves."
         recomendacion = "Monitoree su dieta y consulte a su médico preventivamente."
         clase = "riesgo-medio"
-    elif puntos == 1:
+    else:
         resultado = "Riesgo muy bajo o nulo"
         recomendacion = "Mantenga un estilo de vida saludable y haga ejercicio."
         clase = "riesgo-bajo"
 
-       # Asegúrate de que las llaves (lo que está a la izquierda de los dos puntos) # sean estas:
-    return jsonify({
-    'resultado': resultado,      # <--- Esta es la etiqueta
-    'recomendacion': recomendacion,
-    'clase': clase
-    })
-
-    # Guardar en PostgreSQL
+    # 2. GUARDAR EN POSTGRESQL
     try:
         conn = psycopg2.connect(**DB_CONFIG)
         cur = conn.cursor()
@@ -59,10 +52,15 @@ def diagnosticar():
         conn.commit()
         cur.close()
         conn.close()
+        print("Registro guardado con éxito en la base de datos")
     except Exception as e:
         print(f"Error en DB: {e}")
 
-    return jsonify({"diagnostico": resultado, "recomendacion": recomendacion})
+    return jsonify({
+        'resultado': resultado,
+        'recomendacion': recomendacion,
+        'clase': clase
+    })
 
 @app.route('/historial')
 def ver_historial():

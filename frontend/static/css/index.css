@@ -1,4 +1,4 @@
-/* style.css */
+/* --- VARIABLES Y RESET --- */
 :root {
     --primary: #2563eb;
     --secundary: #4a4a4a;
@@ -11,18 +11,84 @@
 
 * { box-sizing: border-box; }
 
+.texto-justificado {
+    text-align: justify;
+    text-justify: inter-word;
+}
+
 body { 
     font-family: 'Segoe UI', Tahoma, sans-serif; 
     background-color: var(--bg); 
     color: var(--text); 
     margin: 0; 
-    padding: 20px; 
-    display: flex; 
-    justify-content: center; 
+    padding: 20px;
+
+    background-image: url('../images/fondo.png');
+    background-size: cover; /* Cubre toda la pantalla */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* No repite */
+    background-attachment: fixed; /* Mantiene el fondo quieto al hacer scroll */
 }
 
+/* --- NUEVO LAYOUT DE 3 COLUMNAS --- */
+.layout-principal {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* --- PANELES LATERALES (Rojo y Amarillo) --- */
+.panel-info {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 300px;
+}
+
+.panel-info h3 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.descriptivo h3 { color: #A67B5B; }
+.descriptivo h4 { color: #A67B5B; }
+.descriptivo ul {
+    padding-left: 20px;
+    font-size: 14px;
+    color: #A67B5B;
+}
+.descriptivo {
+        border-top: 5px solid #A67B5B;
+        background-color: #fffbeb;
+}
+.descriptivo p {
+    font-size: 14px;
+    color: #A67B5B;
+    line-height: 1.5;
+}
+
+.advertencia h3 { color: #b45309; }
+.advertencia {
+    border-top: 5px solid #f59e0b;
+    background-color: #fffbeb;
+}
+.advertencia p {
+    font-size: 14px;
+    color: #78350f;
+    line-height: 1.5;
+}
+
+/* --- COLUMNA CENTRAL (Tu App Original) --- */
 .app-card {
     background: white;
+    border-top: 5px solid #2563eb;
     padding: 30px;
     border-radius: 24px;
     box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
@@ -30,9 +96,10 @@ body {
     max-width: 480px;
 }
 
-h1 { font-size: 24px; color: #0f172a; text-align: center; margin-bottom: 8px; }
+h1 { font-size: 24px; color: #2563eb; text-align: center; margin-bottom: 8px; }
 .meta-text { text-align: center; color: #64748b; font-size: 14px; margin-bottom: 30px; }
 
+/* --- SÍNTOMAS Y EMOJIS --- */
 .sintoma-card {
     border: 2px solid #e2e8f0;
     border-radius: 16px;
@@ -48,10 +115,12 @@ h1 { font-size: 24px; color: #0f172a; text-align: center; margin-bottom: 8px; }
 .sintoma-card input { width: 22px; height: 22px; margin-right: 15px; cursor: pointer; }
 .sintoma-card label { cursor: pointer; font-weight: 500; flex-grow: 1; }
 
-        .tag-alta { background: #fee2e2; color: #b91c1c; }
-        .tag-moderada { background: #fef3c7; color: #92400e; }
-        .tag-baja { background: #dcfce7; color: #166534; }
+.icono-sintoma {
+    font-size: 24px;
+    margin-left: auto; /* Empuja el emoji hacia la derecha */
+}
 
+/* --- BOTONES --- */
 .btn-main {
     background: var(--primary);
     color: white;
@@ -80,6 +149,7 @@ h1 { font-size: 24px; color: #0f172a; text-align: center; margin-bottom: 8px; }
     box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
 }
 
+/* --- MANEJO DE ERRORES --- */
 #error-box {
     display: none;
     background: #fee2e2;
@@ -91,48 +161,40 @@ h1 { font-size: 24px; color: #0f172a; text-align: center; margin-bottom: 8px; }
     font-size: 14px;
 }
 
+/* --- CUADRO DE RESULTADO Y COLORES DINÁMICOS --- */
 #resultado {
     display: none;
+}
+
+.alerta {
     margin-top: 25px;
     padding: 20px;
     border-radius: 16px;
     animation: slideUp 0.4s ease-out;
 }
 
+.riesgo-alto { background-color: #fee2e2; border-left: 6px solid #ef4444; color: #991b1b; }
+.riesgo-medio { background-color: #fef3c7; border-left: 6px solid #f59e0b; color: #92400e; }
+.riesgo-bajo { background-color: #dcfce7; border-left: 6px solid #22c55e; color: #166534; }
+
 @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } }
+
+/* --- RESPONSIVIDAD --- */
+@media (max-width: 900px) {
+    .layout-principal {
+        flex-direction: column;
+        align-items: center;
+    }
+    .panel-info {
+        max-width: 480px; 
+        order: 2; /* Los paneles de info bajan en móviles */
+    }
+    .app-card {
+        order: 1; /* El formulario se queda arriba */
+    }
+}
 
 @media (max-width: 380px) {
     .app-card { padding: 20px; }
     h1 { font-size: 20px; }
 }
-
-/* Estilos base para el cuadro de resultado */
-.alerta {
-    margin-top: 25px;
-    padding: 20px;
-    border-radius: 16px;
-    border-left: 6px solid;
-    animation: slideUp 0.4s ease-out;
-}
-
-/* Colores dinámicos según el riesgo */
-.riesgo-alto { 
-    background-color: #fee2e2; 
-    border-color: #ef4444; 
-    color: #991b1b; 
-}
-.riesgo-medio { 
-    background-color: #fef3c7; 
-    border-color: #f59e0b; 
-    color: #92400e; 
-}
-.riesgo-bajo { 
-    background-color: #dcfce7; 
-    border-color: #22c55e; 
-    color: #166534; 
-}
-
-/* Esto le da vida al recuadro de la imagen image_c21838.png */
-.riesgo-alto { background-color: #fee2e2; border-left: 6px solid #ef4444; color: #991b1b; }
-.riesgo-medio { background-color: #fef3c7; border-left: 6px solid #f59e0b; color: #92400e; }
-.riesgo-bajo { background-color: #dcfce7; border-left: 6px solid #22c55e; color: #166534; }
