@@ -8,15 +8,19 @@
 </head>
 <body>
 
-<div class="container">
-    <a href="/" class="btn-back">← Volver al Analizador</a>
-
     <header>
         <h1>Historial Médico</h1>
         <p class="subtitle">Resultados previos del equipo de desarrollo.</p>
     </header>
 
+    <div class="container">
+    <a href="/" class="btn-back">← Volver al Analizador</a>
+
     {% if registros %}
+        <form action="{{ url_for('borrar_historial') }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar permanentemente todo el historial?');">
+            <button type="submit" class="btn-delete">Borrar Historial</button>
+        </form>
+
         {% for r in registros %}
         <div class="registro-card">
             <span class="fecha">{{ r[0].strftime('%d %b %Y • %H:%M') }}</span>
@@ -33,7 +37,7 @@
         </div>
         {% endfor %}
     {% else %}
-        <p style="text-align:center; color:#94a3b8;">No hay registros aún.</p>
+        <p style="text-align:center; color:#94a3b8; margin-top: 50px;">No hay registros aún.</p>
     {% endif %}
 </div>
 
