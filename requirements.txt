@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sqlalchemy
+mysql-connector-python
+pydantic
+python-dotenv
+jinja2
+itsdangerous
+python-multipart

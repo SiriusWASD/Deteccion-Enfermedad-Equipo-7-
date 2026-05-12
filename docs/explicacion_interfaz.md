@@ -1,0 +1,1 @@
+Al pedir primero los datos físicos y luego agrupar los síntomas por nivel de gravedad, reducimos la carga cognitiva del paciente y hacemos que el formulario se sienta como una verdadera consulta médica.

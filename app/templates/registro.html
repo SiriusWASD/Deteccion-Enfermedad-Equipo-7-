@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - Sistema Experto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-md w-96">
+        <h2 class="text-2xl font-bold mb-6 text-center text-blue-700">Crear Cuenta</h2>
+        {% if mensaje %}
+            <p class="bg-red-100 text-red-700 p-2 rounded mb-4 text-sm">{{ mensaje }}</p>
+        {% endif %}
+        <form action="/procesar_registro" method="POST">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Nombre Completo</label>
+                <input type="text" name="nombre" required class="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Correo Electrónico</label>
+                <input type="email" name="correo" required class="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Contraseña</label>
+                <input type="password" name="password" required class="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:border-blue-500">
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-800 transition">Registrarse</button>
+        </form>
+        <p class="mt-4 text-center text-sm text-gray-600">
+            ¿Ya tienes cuenta? <a href="/" class="text-blue-500 hover:underline">Inicia sesión</a>
+        </p>
+    </div>
+</body>
+</html>
