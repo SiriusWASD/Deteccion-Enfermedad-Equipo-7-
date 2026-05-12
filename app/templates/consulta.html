@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta - Sistema Experto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-blue-700 p-4 text-white shadow-md flex justify-between items-center">
+        <div class="font-bold text-xl">Sistema Experto - Evaluación Médica</div>
+        <a href="/dashboard" class="text-white hover:text-gray-200 font-semibold text-sm">Volver al Panel</a>
+    </nav>
+
+    <div class="container mx-auto mt-8 p-4 max-w-4xl">
+        <div class="bg-white rounded-xl shadow-lg p-8 border-t-4 {% if tipo == 'menor' %}border-yellow-400{% else %}border-blue-600{% endif %}">
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">
+                Evaluación de {% if tipo == 'menor' %}Menor de Edad{% else %}Adulto{% endif %}
+            </h2>
+            <p class="text-gray-600 mb-8">Completa la siguiente información por secciones para que el motor de inferencia analice tu caso.</p>
+
+            <form action="/procesar_diagnostico" method="POST">
+                <!-- Campo oculto para saber qué lógica usar en el backend -->
+                <input type="hidden" name="es_menor" value="{% if tipo == 'menor' %}true{% else %}false{% endif %}">
+
+                <!-- SECCIÓN 1: Datos Físicos -->
+                <fieldset class="mb-8 p-6 border rounded-lg bg-gray-50">
+                    <legend class="text-lg font-bold text-gray-700 px-2">1. Datos Físicos y Demográficos</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Nombre del Paciente</label>
+                            <input type="text" name="nombre_paciente" required class="w-full px-3 py-2 border rounded shadow-sm focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Edad</label>
+                            <input type="number" name="edad" required min="{% if tipo == 'menor' %}0{% else %}18{% endif %}" max="{% if tipo == 'menor' %}17{% else %}120{% endif %}" class="w-full px-3 py-2 border rounded shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Peso (kg)</label>
+                            <input type="number" step="0.1" name="peso" required class="w-full px-3 py-2 border rounded shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Estatura (metros, ej. 1.70)</label>
+                            <input type="number" step="0.01" name="estatura" required class="w-full px-3 py-2 border rounded shadow-sm">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- SECCIÓN 2: Síntomas Generales (Peso 1 y 2) -->
+                <fieldset class="mb-8 p-6 border rounded-lg bg-blue-50 border-blue-100">
+                    <legend class="text-lg font-bold text-blue-800 px-2">2. Síntomas Generales</legend>
+                    <p class="text-sm text-gray-600 mb-4">Selecciona los síntomas que el paciente haya presentado recientemente.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for sintoma in sintomas %}
+                            {% if sintoma.peso < 3 %}
+                            <label class="flex items-start space-x-3 p-3 bg-white rounded shadow-sm cursor-pointer hover:bg-gray-50">
+                                <input type="checkbox" name="sintomas_ids" value="{{ sintoma.id_sintoma }}" class="mt-1 h-5 w-5 text-blue-600">
+                                <div>
+                                    <span class="block font-bold text-gray-800">{{ sintoma.nombre_sintoma }}</span>
+                                    <span class="block text-sm text-gray-500">{{ sintoma.descripcion }}</span>
+                                </div>
+                            </label>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </fieldset>
+
+                <!-- SECCIÓN 3: Síntomas Cardinales / Urgentes (Peso 3) -->
+                <fieldset class="mb-8 p-6 border rounded-lg bg-red-50 border-red-100">
+                    <legend class="text-lg font-bold text-red-800 px-2">3. Síntomas de Alerta</legend>
+                    <p class="text-sm text-gray-600 mb-4">Selecciona con cuidado. Estos síntomas son indicadores fuertes.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for sintoma in sintomas %}
+                            {% if sintoma.peso == 3 %}
+                            <label class="flex items-start space-x-3 p-3 bg-white rounded shadow-sm cursor-pointer hover:bg-red-50 border-l-4 border-red-400">
+                                <input type="checkbox" name="sintomas_ids" value="{{ sintoma.id_sintoma }}" class="mt-1 h-5 w-5 text-red-600">
+                                <div>
+                                    <span class="block font-bold text-gray-800">{{ sintoma.nombre_sintoma }}</span>
+                                    <span class="block text-sm text-gray-500">{{ sintoma.descripcion }}</span>
+                                </div>
+                            </label>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </fieldset>
+
+                <div class="text-center">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-800 text-white font-bold py-3 px-10 rounded-lg text-lg shadow-lg transition duration-200">
+                        Procesar Diagnóstico
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

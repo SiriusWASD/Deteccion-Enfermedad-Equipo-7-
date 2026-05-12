@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Sistema Experto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen">
+    <nav class="bg-white shadow-sm p-4 flex justify-between items-center border-b border-slate-200">
+        <span class="font-bold text-slate-800 italic">DiabetesExpert <span class="text-blue-600">v1.1</span></span>
+        <div class="space-x-4 flex items-center">
+            <span class="text-slate-600 text-sm">Hola, <strong>{{ nombre }}</strong></span>
+            <a href="/logout" class="bg-red-50 text-red-600 px-3 py-1 rounded text-xs font-bold hover:bg-red-100 transition">Cerrar Sesión</a>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto mt-12 px-4">
+        <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Panel de Control</h1>
+        <p class="text-slate-600 mb-8">Selecciona una opción para comenzar tu evaluación.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Opción Adulto -->
+            <a href="/consulta/adulto" class="group bg-white p-6 rounded-xl shadow hover:shadow-xl border-2 border-transparent hover:border-blue-500 transition duration-300">
+                <div class="text-4xl mb-4">👨‍💼</div>
+                <h3 class="text-xl font-bold text-slate-800 group-hover:text-blue-600 transition">Perfil Adulto</h3>
+                <p class="text-slate-500 text-sm mt-2">Evaluación para mayores de 18 años con enfoque en estilo de vida.</p>
+            </a>
+
+            <!-- Opción Menor -->
+            <a href="/consulta/menor" class="group bg-white p-6 rounded-xl shadow hover:shadow-xl border-2 border-transparent hover:border-blue-500 transition duration-300">
+                <div class="text-4xl mb-4">🧒</div>
+                <h3 class="text-xl font-bold text-slate-800 group-hover:text-blue-600 transition">Perfil Menor</h3>
+                <p class="text-slate-500 text-sm mt-2">Detección temprana enfocada en síntomas pediátricos y antecedentes.</p>
+            </a>
+        </div>
+
+        <!-- Botón de Historial (Destacado) -->
+        <div class="mt-12 text-center">
+            <a href="/historial" class="inline-flex items-center px-6 py-3 bg-slate-800 text-white rounded-full font-semibold hover:bg-slate-900 transition shadow-lg">
+                <span class="mr-2">📋</span> Ver mi Historial de Consultas
+            </a>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,5 @@
+American Diabetes Association (ADA). (2024). Standards of Care in Diabetes—2024. Diabetes Care, 47(Supplement_1). Rescatado de los lineamientos oficiales para la clasificación y diagnóstico en adultos y criterios de riesgo.
+
+International Society for Pediatric and Adolescent Diabetes (ISPAD). (2022). ISPAD Clinical Practice Consensus Guidelines 2022: Definition, epidemiology, and classification of diabetes in children and adolescents. Pediatric Diabetes, 23(8), 1157-1167. Utilizado para la bifurcación de sintomatología aguda en menores de edad y diferenciación de Diabetes Tipo 1 y Tipo 2 infantil.
+
+Organización Mundial de la Salud (OMS). (2019). Classification of diabetes mellitus. Ginebra: World Health Organization. Utilizado para la estandarización de factores de riesgo globales y la categorización de diabetes gestacional.

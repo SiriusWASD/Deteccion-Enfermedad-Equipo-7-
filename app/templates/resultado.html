@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado - Sistema Experto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-blue-700 p-4 text-white shadow-md flex justify-between items-center">
+        <div class="font-bold text-xl">Dictamen del Sistema Experto</div>
+        <a href="/dashboard" class="bg-white text-blue-700 hover:bg-gray-100 px-4 py-2 rounded text-sm font-semibold transition">Nueva Consulta</a>
+    </nav>
+
+    <div class="container mx-auto mt-10 p-4 max-w-3xl">
+        
+        <!-- Tarjeta Dinámica de Resultados (Semáforo) -->
+        {% set color_clase = 'bg-green-100 border-green-500 text-green-900' %}
+        {% set texto_alerta = 'Sin riesgo inminente detectado' %}
+        
+        {% if resultado.nivel_riesgo == 'Alto' %}
+            {% set color_clase = 'bg-red-100 border-red-600 text-red-900' %}
+            {% set texto_alerta = '¡ATENCIÓN MÉDICA REQUERIDA!' %}
+        {% elif resultado.nivel_riesgo == 'Moderado' %}
+            {% set color_clase = 'bg-yellow-100 border-yellow-500 text-yellow-900' %}
+            {% set texto_alerta = 'PRECAUCIÓN: Se sugieren estudios preventivos' %}
+        {% endif %}
+
+        <div class="rounded-xl shadow-2xl overflow-hidden bg-white border-t-8 {% if resultado.nivel_riesgo == 'Alto' %}border-red-600{% elif resultado.nivel_riesgo == 'Moderado' %}border-yellow-500{% else %}border-green-500{% endif %}">
+            
+            <!-- Cabecera de Alerta -->
+            <div class="{{ color_clase }} p-6 border-b text-center">
+                <h2 class="text-3xl font-black uppercase tracking-wide">{{ texto_alerta }}</h2>
+                <p class="text-lg mt-2 font-medium">Nivel de Riesgo Calculado: <strong>{{ resultado.nivel_riesgo }}</strong></p>
+            </div>
+
+            <!-- Datos Clínicos -->
+            <div class="p-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Resumen Clínico</h3>
+                
+                <div class="grid grid-cols-2 gap-4 mb-6 text-gray-700">
+                    <p><strong>Paciente:</strong> {{ paciente.nombre_paciente }}</p>
+                    <p><strong>Edad:</strong> {{ paciente.edad }} años</p>
+                    <p><strong>IMC Calculado:</strong> {{ paciente.imc }}</p>
+                    <p><strong>Puntuación del Motor:</strong> {{ resultado.puntuacion_total }} puntos</p>
+                </div>
+
+                <div class="bg-gray-100 p-4 rounded-lg mb-6 border-l-4 border-gray-400">
+                    <p class="text-sm text-gray-600 uppercase font-bold mb-1">Diagnóstico Inferido por el Sistema</p>
+                    <p class="text-lg font-semibold text-gray-800">{{ resultado.tipo_diabetes_inferido }}</p>
+                </div>
+
+                <h3 class="text-lg font-bold text-gray-800 mb-3">Síntomas Procesados:</h3>
+                {% if sintomas %}
+                    <ul class="list-disc list-inside space-y-1 text-gray-700 mb-6">
+                    {% for s in sintomas %}
+                        <li>{{ s.nombre_sintoma }} <span class="text-sm text-gray-500">(Peso: {{ s.peso }})</span></li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-gray-500 italic mb-6">No se registraron síntomas específicos.</p>
+                {% endif %}
+
+                <!-- Recomendaciones Estáticas según Riesgo -->
+                <div class="mt-8 border-t pt-6">
+                    <h4 class="font-bold text-gray-800 mb-2">Pasos a seguir recomendados:</h4>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        {% if resultado.nivel_riesgo == 'Alto' %}
+                            <li class="flex items-center">⚠️ Acudir a urgencias o programar una cita médica inmediata.</li>
+                            <li class="flex items-center">🩸 Solicitar prueba de hemoglobina glicosilada (HbA1c) o glucosa en ayuno.</li>
+                        {% elif resultado.nivel_riesgo == 'Moderado' %}
+                            <li class="flex items-center">📅 Agendar una revisión médica general este mes.</li>
+                            <li class="flex items-center">🥗 Mejorar el régimen alimenticio y monitorear el IMC.</li>
+                        {% else %}
+                            <li class="flex items-center">✅ Mantener una dieta equilibrada y ejercicio regular.</li>
+                            <li class="flex items-center">🩺 Realizar chequeos anuales de rutina.</li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+        
+        <!-- Descargo de responsabilidad obligatorio en sistemas expertos -->
+        <p class="text-center text-xs text-gray-400 mt-6 max-w-2xl mx-auto">
+            *Nota Legal: Las inferencias generadas por este Sistema Experto son de carácter académico e informativo, basadas en lineamientos generales. No sustituyen el diagnóstico, tratamiento ni consejo de un profesional de la salud acreditado.
+        </p>
+
+    </div>
+</body>
+</html>
