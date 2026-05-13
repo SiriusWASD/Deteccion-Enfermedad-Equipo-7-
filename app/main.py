@@ -1,155 +1,147 @@
 # Archivo: app/main.py
 import os
-from typing import List, Optional
-
-from fastapi import FastAPI, Request, Depends, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
-from starlette.middleware.sessions import SessionMiddleware
-
+from flask import Flask, render_template, request, redirect, url_for, session
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 
 # Importar base de datos, modelos y motor
-from app.db.database import engine, Base, get_db
+from app.db.database import engine, Base, SessionLocal
 from app.db.models import Usuario, SintomaCatalogo, Paciente, HistorialDiagnostico
 from app.expert_system.inference_engine import MotorInferenciaDiabetes
 
-# 1. Inicializar Base de Datos
+# 1. Inicializar Base de Datos (¡Esto creará las tablas en PostgreSQL!)
 Base.metadata.create_all(bind=engine)
 
-# 2. Inicializar FastAPI
-app = FastAPI(title="Sistema Experto Diabetes v1.1")
-
-# 3. Configuración de Sesiones
-SECRET_KEY = os.getenv("SECRET_KEY", "clave_secreta_para_desarrollo_local")
-app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
-
-# 4. Configurar Plantillas
-templates = Jinja2Templates(directory="app/templates")
+# 2. Inicializar Flask
+app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY", "clave_secreta_equipo_7")
 
 # ==========================================
 # RUTAS DE AUTENTICACIÓN Y REGISTRO
 # ==========================================
 
-@app.get("/", response_class=HTMLResponse)
-async def pagina_login(request: Request, mensaje: Optional[str] = None):
+@app.route("/", methods=["GET"])
+def pagina_login():
     """Muestra la pantalla de inicio de sesión."""
-    if request.session.get("usuario_id"):
-        return RedirectResponse(url="/dashboard")
-    return templates.TemplateResponse(request, "login.html", {"mensaje": mensaje})
+    if "usuario_id" in session:
+        return redirect(url_for("panel_principal"))
+    mensaje = request.args.get("mensaje")
+    return render_template("login.html", mensaje=mensaje)
 
-@app.post("/login")
-async def procesar_login(
-    request: Request, 
-    correo: str = Form(...), 
-    password: str = Form(...), 
-    db: Session = Depends(get_db)
-):
+@app.route("/login", methods=["POST"])
+def procesar_login():
     """Valida credenciales y crea la sesión."""
+    db = SessionLocal()
+    correo = request.form.get("correo")
+    password = request.form.get("password")
+    
     usuario = db.query(Usuario).filter(Usuario.correo == correo).first()
     
     if not usuario or usuario.password_hash != password:
-        return templates.TemplateResponse(request, "login.html", {
-            "mensaje": "Credenciales inválidas. Intente de nuevo."
-        })
+        db.close()
+        return render_template("login.html", mensaje="Credenciales inválidas. Intente de nuevo.")
     
-    request.session["usuario_id"] = usuario.id_usuario
-    request.session["nombre"] = usuario.nombre_completo
-    return RedirectResponse(url="/dashboard", status_code=303)
+    session["usuario_id"] = usuario.id_usuario
+    session["nombre"] = usuario.nombre_completo
+    db.close()
+    return redirect(url_for("panel_principal"))
 
-@app.get("/registro", response_class=HTMLResponse)
-async def pantalla_registro(request: Request):
+@app.route("/registro", methods=["GET"])
+def pantalla_registro():
     """Muestra el formulario para crear una nueva cuenta."""
-    return templates.TemplateResponse(request, "registro.html", {"mensaje": None})
+    return render_template("registro.html", mensaje=None)
 
-@app.post("/procesar_registro")
-async def procesar_registro(
-    request: Request,
-    nombre: str = Form(...),
-    correo: str = Form(...),
-    password: str = Form(...),
-    db: Session = Depends(get_db)
-):
+@app.route("/procesar_registro", methods=["POST"])
+def procesar_registro():
     """Crea un nuevo usuario en la base de datos."""
+    db = SessionLocal()
+    nombre = request.form.get("nombre")
+    correo = request.form.get("correo")
+    password = request.form.get("password")
+    
     existe = db.query(Usuario).filter(Usuario.correo == correo).first()
     if existe:
-        return templates.TemplateResponse(request, "registro.html", {
-            "mensaje": "El correo ya está registrado."
-        })
+        db.close()
+        return render_template("registro.html", mensaje="El correo ya está registrado.")
     
     nuevo_usuario = Usuario(nombre_completo=nombre, correo=correo, password_hash=password)
     db.add(nuevo_usuario)
     db.commit()
-    return RedirectResponse(url="/?mensaje=Cuenta+creada+exitosamente", status_code=303)
+    db.close()
+    return redirect(url_for("pagina_login", mensaje="Cuenta creada exitosamente"))
 
-@app.get("/logout")
-async def cerrar_sesion(request: Request):
+@app.route("/logout", methods=["GET"])
+def cerrar_sesion():
     """Limpia la sesión y redirige al login."""
-    request.session.clear()
-    return RedirectResponse(url="/")
+    session.clear()
+    return redirect(url_for("pagina_login"))
 
 # ==========================================
 # RUTAS DEL PANEL Y CONSULTAS
 # ==========================================
 
-@app.get("/dashboard", response_class=HTMLResponse)
-async def panel_principal(request: Request):
+@app.route("/dashboard", methods=["GET"])
+def panel_principal():
     """Pantalla de bienvenida y selección de perfil."""
-    usuario_id = request.session.get("usuario_id")
-    if not usuario_id:
-        return RedirectResponse(url="/")
+    if "usuario_id" not in session:
+        return redirect(url_for("pagina_login"))
     
-    nombre = request.session.get("nombre")
-    return templates.TemplateResponse(request, "dashboard.html", {"nombre": nombre})
+    nombre = session.get("nombre")
+    return render_template("dashboard.html", nombre=nombre)
 
-@app.get("/historial", response_class=HTMLResponse)
-async def ver_historial(request: Request, db: Session = Depends(get_db)):
+@app.route("/historial", methods=["GET"])
+def ver_historial():
     """Muestra todas las consultas previas del usuario logueado."""
-    usuario_id = request.session.get("usuario_id")
-    if not usuario_id:
-        return RedirectResponse(url="/")
+    if "usuario_id" not in session:
+        return redirect(url_for("pagina_login"))
+    
+    db = SessionLocal()
+    usuario_id = session.get("usuario_id")
     
     consultas = db.query(HistorialDiagnostico).join(Paciente).filter(
         Paciente.id_usuario == usuario_id
     ).order_by(HistorialDiagnostico.fecha_consulta.desc()).all()
     
-    return templates.TemplateResponse(request, "historial.html", {"consultas": consultas})
+    db.close()
+    return render_template("historial.html", consultas=consultas)
 
-@app.get("/consulta/{tipo_paciente}", response_class=HTMLResponse)
-async def pantalla_consulta(request: Request, tipo_paciente: str, db: Session = Depends(get_db)):
+@app.route("/consulta/<tipo_paciente>", methods=["GET"])
+def pantalla_consulta(tipo_paciente):
     """Formulario de síntomas filtrado por tipo de paciente."""
-    if not request.session.get("usuario_id"):
-        return RedirectResponse(url="/")
+    if "usuario_id" not in session:
+        return redirect(url_for("pagina_login"))
 
+    db = SessionLocal()
     sintomas = db.query(SintomaCatalogo).filter(
         or_(SintomaCatalogo.aplica_a == tipo_paciente, SintomaCatalogo.aplica_a == 'ambos')
     ).all()
+    db.close()
+    
+    return render_template("consulta.html", tipo=tipo_paciente, sintomas=sintomas)
 
-    return templates.TemplateResponse(request, "consulta.html", {
-        "tipo": tipo_paciente,
-        "sintomas": sintomas
-    })
+@app.route("/procesar_diagnostico", methods=["POST"])
+def procesar_diagnostico():
+    """Ejecuta la inferencia, guarda en DB y muestra resultados."""
+    if "usuario_id" not in session:
+        return redirect(url_for("pagina_login"))
 
-@app.post("/procesar_diagnostico", response_class=HTMLResponse)
-async def procesar_diagnostico(
-    request: Request,
-    es_menor: str = Form(...),
-    nombre_paciente: str = Form(...),
-    edad: int = Form(...),
-    peso: float = Form(...),
-    estatura: float = Form(...),
-    sintomas_ids: Optional[List[int]] = Form(default=[]),
-    db: Session = Depends(get_db)
-):
-    """Ejecuta la inferencia, guarda en DB y muestra resultados por colores."""
-    usuario_id = request.session.get("usuario_id")
-    if not usuario_id:
-        return RedirectResponse(url="/")
+    db = SessionLocal()
+    usuario_id = session.get("usuario_id")
+    
+    es_menor_str = request.form.get("es_menor")
+    es_menor_bool = True if es_menor_str and es_menor_str.lower() == 'true' else False
+    
+    nombre_paciente = request.form.get("nombre_paciente")
+    edad = int(request.form.get("edad", 0))
+    peso = float(request.form.get("peso", 0))
+    estatura = float(request.form.get("estatura", 0))
+    
+    # Obtener lista de IDs de síntomas desde los checkboxes
+    sintomas_ids_str = request.form.getlist("sintomas_ids")
+    sintomas_ids = [int(sid) for sid in sintomas_ids_str]
 
     # 1. Cálculos de salud
     imc = peso / (estatura ** 2) if estatura > 0 else 0
-    es_menor_bool = es_menor.lower() == 'true'
 
     # 2. Registrar Paciente
     nuevo_paciente = Paciente(
@@ -178,10 +170,13 @@ async def procesar_diagnostico(
     nuevo_diagnostico.sintomas.extend(sintomas_db)
     db.add(nuevo_diagnostico)
     db.commit()
+    db.close()
 
     # 6. Respuesta Visual
-    return templates.TemplateResponse(request, "resultado.html", {
-        "paciente": nuevo_paciente,
-        "resultado": resultado,
-        "sintomas": sintomas_db
-    })
+    return render_template("resultado.html", 
+                           paciente=nuevo_paciente, 
+                           resultado=resultado, 
+                           sintomas=sintomas_db)
+
+if __name__ == "__main__":
+    app.run(debug=True, port=8000)

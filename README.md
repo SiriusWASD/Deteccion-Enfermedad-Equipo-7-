@@ -1,76 +1,62 @@
-# 🩺 Sistema Experto para Detección de Diabetes - Equipo 7
+# 🩺 Sistema Experto para Detección de Riesgo de Diabetes - Equipo 7
 
-Este es un sistema experto basado en reglas y ponderación clínica para el tamizaje temprano de diabetes en pacientes adultos y menores. Utiliza **FastAPI** para el backend y **MySQL** para la persistencia de datos.
+Este es un sistema experto basado en reglas y ponderación clínica para el tamizaje temprano de diabetes en pacientes. Utiliza **Flask** para el backend, **Jinja2** para la renderización de interfaces y **PostgreSQL** para la persistencia de datos.
 
 ---
 
-## 🛠️ Requisitos Previos (Antes de empezar)
+## 🛠️ Requisitos Previos
 
-VS Code por sí solo no puede ejecutar el código. Tus compañeros deben asegurarse de instalar:
-
-1. **Python 3.10 o superior:** [Descargar aquí](https://www.python.org/downloads/). 
-   * *IMPORTANTE:* Durante la instalación, marcar la casilla **"Add Python to PATH"**
+Asegúrate de tener instalados los siguientes programas:
+1. **Python 3.10 o superior:** (Asegúrate de marcar "Add Python to PATH" al instalar).
+2. **PostgreSQL (versión 16 o 17):** Descarga el instalador oficial y asegúrate de recordar la contraseña del superusuario `postgres`. La herramienta **pgAdmin 4** se instalará automáticamente con él.
 
 ---
 
 ## 🚀 Guía de Instalación Paso a Paso
 
-Sigue estos pasos en orden para correr el programa en tu computadora:
-
 ### 1. Clonar el Repositorio
-Abre una terminal en VS Code y escribe:
+Abre una terminal en VS Code y descarga el código:
 ```bash
 git clone [https://github.com/TU_REPOSITORIO/Deteccion-Enfermedad-Equipo-7-.git](https://github.com/TU_REPOSITORIO/Deteccion-Enfermedad-Equipo-7-.git)
 cd Deteccion-Enfermedad-Equipo-7-
-2. Configurar la Base de Datos
-Abre el Panel de Control de MySQL y haz clic en Start en el módulo de MySQL
 
-Importa el archivo localizado en scripts/init_db.sql o copia su contenido y ejecútalo en la pestaña SQL.
 
-3. Instalar Librerías
-En la terminal de VS Code, ejecuta el siguiente comando para instalar todo lo necesario:
+2. Instalar Librerías
+En la terminal de VS Code, ejecuta:
 
 Bash
 python -m pip install -r requirements.txt
-4. Configurar Variables de Entorno
-Cambia un archivo llamado exactamente .env en la raíz del proyecto con lo siguiente:
+
+
+3. Configurar la Base de Datos (pgAdmin 4)
+Abre pgAdmin 4 e ingresa tu contraseña maestra.
+
+Ve a Servers > PostgreSQL > Databases.
+
+Haz clic derecho en Databases > Create > Database...
+
+Nombra la base de datos como: "diabetes_expert_system" y guarda.
+
+4. Archivo de Configuración (.env)
+Crea/Modifica un archivo llamado exactamente .env en la raíz del proyecto con este contenido:
 
 Fragmento de código
-DB_USER=root
-DB_PASSWORD="tu pasword"
+DB_USER=postgres
+DB_PASSWORD=tu_contraseña_de_postgres
 DB_HOST=localhost
-DB_PORT=3306
+DB_PORT=5432
 DB_NAME=diabetes_expert_system
 SECRET_KEY=clave_secreta_equipo_7
 
-🖥️ Cómo Ejecutar el Programa
-Una vez configurado todo, lanza el servidor con este comando:
+
+5. Iniciar el Servidor y Crear Tablas
+Ejecuta el siguiente comando. Al hacerlo, SQLAlchemy se conectará a PostgreSQL y creará las tablas automáticamente:
 
 Bash
-python -m uvicorn app.main:app --reload
-Cuando veas el mensaje Uvicorn running on http://127.0.0.1:8000, abre tu navegador y entra a:
-👉 http://localhost:8000
+python -m app.main
+6. Cargar los Datos Base
+Con el servidor corriendo, regresa a pgAdmin 4:
 
-🧪 Datos de Prueba Rápidos
-Para probar el sistema de inmediato sin registrarte manualmente en la base de datos:
+Haz clic derecho sobre la base de datos diabetes_expert_system > Query Tool.
 
-Ve a la opción "Regístrate aquí" en la pantalla de inicio.
-
-Crea una cuenta con cualquier correo y contraseña.
-
-Inicia sesión y comienza tu primera consulta.
-
-📂 Estructura del Proyecto
-/app: Contiene la lógica del servidor, modelos de datos y el motor experto.
-
-/app/templates: Archivos HTML con el diseño de la interfaz.
-
-/docs: Manual técnico y documentación detallada.
-
-requirements.txt: Lista de dependencias del sistema.
-
-
----
-
-### Un consejo final
-Si alguno de tus compañeros recibe el error de **"Access Denied"** en la base de datos, recuérdales revisar el archivo `.env`. En instalaciones estándar de MySQL, el usuario es `root` y la contraseña se deja vacía.
+Ejecuta el script SQL (O copia y pega el contenido) ubicado en la carpeta del proyecto para cargar el catálogo de síntomas y el usuario administrador. (scripts/init_db.sql)
