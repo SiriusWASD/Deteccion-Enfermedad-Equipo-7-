@@ -45,23 +45,17 @@ El sistema sigue el principio de **Separación de Intereses** (*Separation of Co
 
 ---
 
-## 4. Justificación del Stack Tecnológico 💻
+## 4. Justificación del Stack Tecnológico (Flask + PostgreSQL) 💻
 
-### FastAPI vs. Otros Frameworks
-*   **Tipado Estático:** El uso de Python 3.10+ con Pydantic garantiza que los datos médicos (pesos, edades, IMC) sean siempre del tipo correcto antes de entrar al motor, evitando errores de lógica por datos malformados.
-*   **Rendimiento:** Al ser un framework ASGI, permite el manejo de múltiples consultas concurrentes con mínima latencia, ideal para un sistema de consulta médica de alta disponibilidad.
+### Flask como Microframework (Backend)
+Elegimos **Flask** por su naturaleza de microframework modular. En el desarrollo de Sistemas Expertos, se busca que la interfaz no esté fuertemente acoplada a la lógica. 
+*   **Renderizado de Servidor (SSR):** La integración nativa con **Jinja2** nos permitió crear interfaces dinámicas basadas en la lógica de control del servidor, asegurando que el motor de inferencia (Python) dicte directamente el estado de la vista HTML.
+*   **Estabilidad:** Flask es un estándar de la industria, extremadamente maduro y predecible, lo que minimiza los errores de la capa de red al procesar datos médicos sensibles.
 
-### Persistencia ACID (MySQL)
-Elegimos un motor relacional para garantizar la **Integridad Referencial**. Un diagnóstico médico es un dato sensible que debe estar estrictamente vinculado a un historial y a un paciente. La consistencia es prioritaria sobre la flexibilidad de una base de datos NoSQL.
-
----
-
-## 5. Gestión de la Incertidumbre y Limitaciones 🛡️
-
-Todo sistema experto debe reconocer sus fronteras de conocimiento.
-1.  **Datos Subjetivos:** El sistema depende del reporte del usuario (*Self-reporting*).
-2.  **Incertidumbre vs. Probabilidad:** Actualmente el sistema es determinista. Una versión 2.0 podría implementar **Lógica Difusa** (*Fuzzy Logic*) para manejar variables imprecisas como "sed moderada" o "fatiga leve".
-3.  **No Diagnóstico:** Se define técnicamente como una herramienta de **Tamizaje (Screening)**. La conclusión es una "inferencia de riesgo", no una prescripción médica legal.
+### Persistencia ACID con PostgreSQL
+La exigencia de usar **PostgreSQL** eleva el estándar del proyecto a nivel empresarial.
+*   **Cumplimiento de Estándares:** PostgreSQL es el motor de base de datos relacional de código abierto más avanzado. Su estricto cumplimiento del estándar SQL y su robusto manejo de concurrencia garantizan que no haya condiciones de carrera al guardar diagnósticos.
+*   **Integridad Referencial Estricta:** Utilizamos **SQLAlchemy (ORM)** para gestionar las relaciones entre Usuarios, Pacientes e Historiales. Si un diagnóstico falla en completarse en la base de datos, la transacción hace *rollback*, evitando historiales médicos corruptos o huérfanos.
 
 ---
 

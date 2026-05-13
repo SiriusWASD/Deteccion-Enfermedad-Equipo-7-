@@ -1,9 +1,5 @@
-fastapi
-uvicorn
-sqlalchemy
-mysql-connector-python
+Flask
+SQLAlchemy
+psycopg2-binary
 pydantic
 python-dotenv
-jinja2
-itsdangerous
-python-multipart
