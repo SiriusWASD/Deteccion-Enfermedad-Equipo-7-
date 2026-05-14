@@ -102,8 +102,11 @@ def ver_historial():
         Paciente.id_usuario == usuario_id
     ).order_by(HistorialDiagnostico.fecha_consulta.desc()).all()
     
+    # ✅ CORRECCIÓN APLICADA: Renderizamos el HTML antes de cerrar la base de datos
+    html_renderizado = render_template("historial.html", consultas=consultas)
     db.close()
-    return render_template("historial.html", consultas=consultas)
+    
+    return html_renderizado
 
 @app.route("/consulta/<tipo_paciente>", methods=["GET"])
 def pantalla_consulta(tipo_paciente):
@@ -115,9 +118,12 @@ def pantalla_consulta(tipo_paciente):
     sintomas = db.query(SintomaCatalogo).filter(
         or_(SintomaCatalogo.aplica_a == tipo_paciente, SintomaCatalogo.aplica_a == 'ambos')
     ).all()
+    
+    # ✅ CORRECCIÓN APLICADA: Renderizamos el HTML antes de cerrar la base de datos
+    html_renderizado = render_template("consulta.html", tipo=tipo_paciente, sintomas=sintomas)
     db.close()
     
-    return render_template("consulta.html", tipo=tipo_paciente, sintomas=sintomas)
+    return html_renderizado
 
 @app.route("/procesar_diagnostico", methods=["POST"])
 def procesar_diagnostico():
@@ -170,13 +176,15 @@ def procesar_diagnostico():
     nuevo_diagnostico.sintomas.extend(sintomas_db)
     db.add(nuevo_diagnostico)
     db.commit()
-    db.close()
 
-    # 6. Respuesta Visual
-    return render_template("resultado.html", 
-                           paciente=nuevo_paciente, 
-                           resultado=resultado, 
-                           sintomas=sintomas_db)
+    # 6. Respuesta Visual (Renderizamos ANTES de cerrar la base de datos)
+    html_renderizado = render_template("resultado.html", 
+                                       paciente=nuevo_paciente, 
+                                       resultado=resultado, 
+                                       sintomas=sintomas_db)
+    
+    db.close()  # ✅ AHORA SÍ CERRAMOS LA CONEXIÓN
+    return html_renderizado
 
 if __name__ == "__main__":
     app.run(debug=True, port=8000)
